@@ -12,7 +12,7 @@ services:
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 -t public index.php
         environment:
-            db: "mongodb://mongodb:27020"
+            db: "mongodb://mongo:27017"
         ports:
             - 8081:8080
         volumes:

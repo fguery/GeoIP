@@ -2,6 +2,7 @@
 
 namespace GeoIP;
 
+use GeoIP\Models\GeoIp;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use MongoDB\Client as MongoClient;
@@ -33,12 +34,12 @@ class ServiceProvider implements ServiceProviderInterface
 
         $c['mongo'] = function () use ($c) {
             return new MongoClient(
-                $c['config']['db'],
-                [
-                    'w' => 1,
-                    'serverSelectionTryOnce' => false,
-                ]
+                $c['config']['db']
             );
+        };
+
+        $c['geoIpModel'] = function () use ($c) {
+            return new GeoIp($c['mongo']->geoIp->geoIp);
         };
     }
 }
