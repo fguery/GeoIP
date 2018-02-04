@@ -12,3 +12,13 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+
+$container['mongo'] = function ($c) {
+    return new \MongoDB\Client(
+        $c->get('settings')['db'],
+        [
+            'w' => 1,
+            'serverSelectionTryOnce' => false,
+        ]
+    );
+};
