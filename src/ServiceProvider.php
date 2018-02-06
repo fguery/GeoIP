@@ -5,7 +5,6 @@ namespace GeoIP;
 use GeoIP\Models\GeoIp;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use MongoDB\Client as MongoClient;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Monolog\Handler\StreamHandler;
@@ -32,14 +31,14 @@ class ServiceProvider implements ServiceProviderInterface
             return $logger;
         };
 
-        $c['mongo'] = function () use ($c) {
-            return new MongoClient(
+        $c['postgres'] = function () use ($c) {
+            return new \PDO(
                 $c['config']['db']
             );
         };
 
         $c['geoIpModel'] = function () use ($c) {
-            return new GeoIp($c['mongo']->geoIp->geoIp);
+            return new GeoIp($c['postgres']);
         };
     }
 }

@@ -53,8 +53,8 @@ class Import extends Command
         $i = 0;
         while (false !== ($line = fgetcsv($file))) {
             $data[] = [
-                'min' => inet_pton($line[0]),
-                'max' => inet_pton($line[1]),
+                'min' => $line[0],
+                'max' => $line[1],
                 'country' => $line[2],
                 'state' => $line[3],
                 'city' => $line[4]
@@ -66,12 +66,6 @@ class Import extends Command
             $i++;
         }
         $this->geoIpModel->insertMany($data);
-    }
-
-    protected function ipToInt($ip)
-    {
-
-
     }
 
     /**
