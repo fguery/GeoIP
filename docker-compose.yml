@@ -12,20 +12,17 @@ services:
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 -t public index.php
         environment:
-            db: "mongodb://mongo:27017"
+            db: pgsql:host=postgres;user=postgres;password=mysecretpassword;port=5432
         ports:
             - 8081:8080
         volumes:
             - .:/var/www
             - logs:/var/www/logs
         depends_on:
-          - mongodb
-    mongodb:
-        image: mongo:3.6
-        container_name: mongo
+          - postgres
+    postgres:
+        image: postgres:10
+        container_name: postgres
         restart: always
-        volumes:
-            - ./data/db/mongo:/data/db
         ports:
-            - "27020:27017"
-        command: --storageEngine wiredTiger
+            - "5432:5432"

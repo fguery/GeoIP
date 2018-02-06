@@ -1,7 +1,7 @@
 FROM php:7.2
 
 RUN apt-get update \
-  && apt-get -y install libssl-dev ${PHPIZE_DEPS} \
+  && apt-get -y install libpq-dev ${PHPIZE_DEPS} \
   && pecl install xdebug \
   && docker-php-ext-enable xdebug \
   && echo " xdebug.remote_enable=on \n\
@@ -12,6 +12,5 @@ RUN apt-get update \
             xdebug.remote_connect_back=0\n\
             xdebug.idekey=\"phpstorm\" \n\
             xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-  && pecl install mongodb \
-  && docker-php-ext-enable mongodb \
+  && docker-php-ext-install pdo pdo_pgsql \
   && apt-get -y remove libssl-dev ${PHPIZE_DEPS}
