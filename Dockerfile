@@ -13,4 +13,4 @@ RUN apt-get update \
             xdebug.idekey=\"phpstorm\" \n\
             xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
   && docker-php-ext-install pdo pdo_pgsql \
-  && apt-get -y remove libssl-dev ${PHPIZE_DEPS}
+  && apt-get -y remove libpq-dev ${PHPIZE_DEPS}
