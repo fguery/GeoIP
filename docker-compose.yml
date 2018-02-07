@@ -9,10 +9,12 @@ services:
         build:
           dockerfile: ./Dockerfile
           context: .
+        image: geoip_slim:latest
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 -t public index.php
         environment:
             db: pgsql:host=postgres;user=postgres;password=mysecretpassword;port=5432
+            dbName: geoIP
         ports:
             - 8081:8080
         volumes:
