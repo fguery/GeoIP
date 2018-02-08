@@ -30,19 +30,18 @@ class Import extends Command
         );
     }
 
-    public function initialize(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         $container = new Container(
             ['settings' => include __DIR__ . '/../settings.php']
         );
         $serviceProvider = new ServiceProvider();
         $container->register($serviceProvider);
-        $this->geoIpModel = $container['geoIpModel'];
-        $this->geoIpModel->prepareCollection();
-    }
+        if (empty($this->geoIpModel)) {
+            $this->setGeoIpModel($container['geoIpModel']);
+        }
+        $this->geoIpModel->createDatabase();
 
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
         $fileName = $input->getOption('file');
         if (empty($fileName)) {
             throw new \InvalidArgumentException('File cannot be empty');
@@ -96,5 +95,16 @@ class Import extends Command
         fclose($file);
         fclose($outputFile);
         return $outputFileName;
+    }
+
+    /**
+     * Required method for passing dependency.
+     * Has to be public for testing (well, could use ReflectionClass trick but...)
+     *
+     * @param GeoIp $geoIp
+     */
+    public function setGeoIpModel(GeoIp $geoIp)
+    {
+        $this->geoIpModel = $geoIp;
     }
 }

@@ -4,7 +4,6 @@ namespace GeoIP\Models;
 
 use PDO;
 
-
 /**
  * Class GeoIp
  */
@@ -22,7 +21,7 @@ class GeoIp
         $this->db = $collection;
     }
 
-    public function prepareCollection()
+    public function createDatabase()
     {
         $this->db->query(
             'drop database geoIP;'
