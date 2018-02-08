@@ -3,6 +3,8 @@
 namespace Tests\Functional;
 
 use Slim\App;
+use Slim\Exception\MethodNotAllowedException;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Environment;
@@ -15,12 +17,6 @@ use Slim\Http\Environment;
  */
 class BaseApiTestCase extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Use middleware when running application?
-     *
-     * @var bool
-     */
-    protected $withMiddleware = true;
 
     /**
      * Process the application given a request method and URI
@@ -29,8 +25,12 @@ class BaseApiTestCase extends \PHPUnit_Framework_TestCase
      * @param string $requestUri the request URI
      * @param array|object|null $requestData the request data
      * @return \Slim\Http\Response
+     *
+     * @throws \Exception
+     * @throws MethodNotAllowedException
+     * @throws NotFoundException
      */
-    public function runApp($requestMethod, $requestUri, $requestData = null)
+    public function runApp(string $requestMethod, string $requestUri, $requestData = null)
     {
         // Create a mock environment for testing with
         $environment = Environment::mock(
@@ -56,14 +56,6 @@ class BaseApiTestCase extends \PHPUnit_Framework_TestCase
 
         // Instantiate the application
         $app = new App($settings);
-
-        // Set up dependencies
-        require __DIR__ . '/../../src/dependencies.php';
-
-        // Register middleware
-        if ($this->withMiddleware) {
-            require __DIR__ . '/../../src/middleware.php';
-        }
 
         // Register routes
         require __DIR__ . '/../../src/routes.php';
