@@ -52,11 +52,12 @@ class Import extends Command
         $i = 0;
         while (false !== ($line = fgetcsv($file))) {
             $data[] = [
-                'min' => $line[0],
-                'max' => $line[1],
+                'periodStart' => $line[0],
+                'periodEnd' => $line[1],
                 'country' => $line[2],
-                'state' => $line[3],
-                'city' => $line[4]
+                'region' => $line[3],
+                'city' => $line[4],
+                'isv6' => (strpos($line[0], ':') !== false),
             ];
             if ($i % 1000 === 0) {
                 $this->geoIpModel->insertMany($data);
