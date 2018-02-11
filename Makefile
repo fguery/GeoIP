@@ -17,7 +17,7 @@ composer-update-test:
 
 install: composer-install docker-build
 
-test: composer-update-test run-test
+install-tests: composer-update-test docker-build
 
 run-test:
 	docker exec -e tableName="geo_ip_test" geoip_php vendor/bin/phpunit
