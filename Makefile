@@ -15,18 +15,15 @@ composer-update-test:
 		--volume $(shell pwd):/app \
 	composer update --ignore-platform-reqs
 
-
 install: composer-install docker-build
 
-test: composer-update-test docker-build run-test
+test: composer-update-test run-test
 
 run-test:
-	docker run --rm --interactive --tty \
-		--volume $(shell pwd):/var/www/ \
-		--name geoip_test \
-		--env dbName='geoIP_test' \
-		-w /var/www/ \
-		geoip_slim:latest vendor/bin/phpunit
+	docker exec -e tableName="geoIP_test" geoip_php vendor/bin/phpunit
+
+import-db:
+	docker exec geoip_php bin/console.php import
 
 docker-build:
 	docker-compose build

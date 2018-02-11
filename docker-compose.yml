@@ -5,11 +5,12 @@ volumes:
         driver: local
 
 services:
-    slim:
+    geoip_php:
         build:
           dockerfile: ./Dockerfile
           context: .
         image: geoip_slim:latest
+        container_name: geoip_php
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 -t public index.php
         environment:
