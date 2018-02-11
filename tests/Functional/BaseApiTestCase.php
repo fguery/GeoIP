@@ -2,7 +2,9 @@
 
 namespace Tests\Functional;
 
+use GeoIP\ServiceProvider;
 use Slim\App;
+use Slim\Container;
 use Slim\Exception\MethodNotAllowedException;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
@@ -54,8 +56,13 @@ class BaseApiTestCase extends \PHPUnit_Framework_TestCase
         // Use the application settings
         $settings = require __DIR__ . '/../../src/settings.php';
 
+        // Set up dependancies
+        $container = new Container(['settings' => $settings]);
+        $serviceProvider = new ServiceProvider();
+        $serviceProvider->register($container);
+
         // Instantiate the application
-        $app = new App($settings);
+        $app = new App($container);
 
         // Register routes
         require __DIR__ . '/../../src/routes.php';

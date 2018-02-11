@@ -24,21 +24,19 @@ class LookupTest extends BaseApiTestCase
         ]);
         $application->find('import')->run(
             new ArrayInput([
-                'name' => 'input',
-                'file' => __DIR__ . '/../fixtures/geoIp.csv'
+                '--file' => __DIR__ . '/../fixtures/geoIp.csv'
             ]),
             new NullOutput()
         );
     }
 
-
-
     public function testLookupByValidIpV4ReturnsLocation()
     {
         $response = $this->runApp(
             'GET',
-            'lookup?ip=1.2.3.4'
+            '/lookup?ip=1.2.3.4'
         );
+        $response->getBody()->rewind();
         $body = $response->getBody()->getContents();
         $body = json_decode($body, true);
         $this->assertEquals(
@@ -57,8 +55,9 @@ class LookupTest extends BaseApiTestCase
     {
         $response = $this->runApp(
             'GET',
-            'lookup?ip=2c0f:ffb8:1a2c'
+            '/lookup?ip=2c0f:ffb8:1a2c::'
         );
+        $response->getBody()->rewind();
         $body = $response->getBody()->getContents();
         $body = json_decode($body, true);
         $this->assertEquals(
@@ -73,20 +72,20 @@ class LookupTest extends BaseApiTestCase
         );
     }
 
-
     public function testLookupByShortenedIpV6ReturnsLocation()
     {
         $response = $this->runApp(
             'GET',
-            'lookup?ip=2c0f:ffb8::1a2c'
+            '/lookup?ip=2c0f:ffb8::1a2c'
         );
+        $response->getBody()->rewind();
         $body = $response->getBody()->getContents();
         $body = json_decode($body, true);
         $this->assertEquals(
             [
                 'city' => 'Khartoum',
                 'region' =>'Khartoum',
-                'ip' => '2c0f:ffb8:1a2c::',
+                'ip' => '2c0f:ffb8::1a2c',
                 'rangeStart' =>'2c0f:ffb8::',
                 'rangeEnd' =>'2c0f:ffb8:ffff:ffff:ffff:ffff:ffff:ffff',
             ],
@@ -98,28 +97,11 @@ class LookupTest extends BaseApiTestCase
     {
         $response = $this->runApp(
             'GET',
-            'lookup?ip=zzzz'
+            '/lookup?ip=zzzz'
         );
         $this->assertEquals(
             400,
             $response->getStatusCode()
-        );
-    }
-
-
-    public function testNotSufficientIp()
-    {
-        $response = $this->runApp(
-            'GET',
-            'lookup?ip=2c0f:'
-        );
-        $this->assertEquals(
-            400,
-            $response->getStatusCode()
-        );
-        $this->assertEquals(
-            'IP too broad for resolving',
-            $response->getReasonPhrase()
         );
     }
 
@@ -127,7 +109,7 @@ class LookupTest extends BaseApiTestCase
     {
         $response = $this->runApp(
             'GET',
-            'lookup?ip=2c0f:2c0f:2c0f:2c0f:2c0f:2c0f:2c0f:2c0f'
+            '/lookup?ip=2c0f:2c0f:2c0f:2c0f:2c0f:2c0f:2c0f:2c0f'
         );
         $this->assertEquals(
             404,
