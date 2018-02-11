@@ -9,6 +9,9 @@ use PDO;
  */
 class GeoIp
 {
+    const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
+    const NOT_FOUND = 'NOT_FOUND';
+
     /** @var PDO */
     protected $db;
     /** @var string */
@@ -63,19 +66,48 @@ class GeoIp
      */
     public function insertMany($documents)
     {
-        $query = 'INSERT into geoIP
-            (rangeStart, rangeEnd, isv6, country, region, city)
-            VALUES (:rangeStart, :rangeEnd, :isv6, :country, :state, :city)'
+        $query = 'INSERT into ' . $this->tableName . '
+            (range_start, range_end, is_v6, country, region, city)
+            VALUES (:rangeStart, :rangeEnd, :isv6, :country, :region, :city)'
         ;
         $stmt = $this->db->prepare($query);
         foreach ($documents as $doc) {
             $stmt->bindParam(':rangeStart', $doc['rangeStart']);
             $stmt->bindParam(':rangeEnd', $doc['rangeEnd']);
-            $stmt->bindParam(':isv6', $doc['isv6']);
+            $stmt->bindParam(':isv6', $doc['isv6'], PDO::PARAM_BOOL);
             $stmt->bindParam(':country', $doc['country']);
             $stmt->bindParam(':region', $doc['region']);
             $stmt->bindParam(':city', $doc['city']);
             $stmt->execute();
         }
+    }
+
+    /**
+     * @param string $ip
+     *   A valid IP v4 or v6
+     * @return array|string
+     */
+    public function findOneByIp($ip)
+    {
+        $isV6 = strpos($ip, ':') !== false;
+
+        $stmt = $this->db->prepare(
+            'SELECT
+                range_start, range_end, region, city
+            FROM ' . $this->tableName . '
+            WHERE is_v6 = :isv6 AND range_start <= :ip::INET AND range_end >= :ip::INET'
+        );
+        $stmt->bindParam(':isv6', $isV6, PDO::PARAM_BOOL);
+        $stmt->bindParam(':ip', $ip);
+        $result = $stmt->execute();
+        if ($result) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (empty($result)) {
+                return self::NOT_FOUND;
+            } else {
+                return $result;
+            }
+        }
+        return self::UNKNOWN_ERROR;
     }
 }
