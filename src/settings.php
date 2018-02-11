@@ -10,5 +10,6 @@ return [
         'path' =>  __DIR__ . '/../logs/app.log',
         'level' => \Monolog\Logger::DEBUG,
     ],
-    'db' => getenv('db')
+    'db' => getenv('db'),
+    'tableName' => getenv('tableName'),
 ];

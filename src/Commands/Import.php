@@ -52,8 +52,8 @@ class Import extends Command
         $i = 0;
         while (false !== ($line = fgetcsv($file))) {
             $data[] = [
-                'periodStart' => $line[0],
-                'periodEnd' => $line[1],
+                'rangeStart' => $line[0],
+                'rangeEnd' => $line[1],
                 'country' => $line[2],
                 'region' => $line[3],
                 'city' => $line[4],

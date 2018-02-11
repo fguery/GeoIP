@@ -38,7 +38,10 @@ class ServiceProvider implements ServiceProviderInterface
         };
 
         $c['geoIpModel'] = function () use ($c) {
-            return new GeoIp($c['postgres']);
+            return new GeoIp(
+                $c['postgres'],
+                $c['config']['tableName']
+            );
         };
     }
 }

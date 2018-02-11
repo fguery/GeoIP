@@ -20,7 +20,7 @@ install: composer-install docker-build
 test: composer-update-test run-test
 
 run-test:
-	docker exec -e tableName="geoIP_test" geoip_php vendor/bin/phpunit
+	docker exec -e tableName="geo_ip_test" geoip_php vendor/bin/phpunit
 
 import-db:
 	docker exec geoip_php bin/console.php import

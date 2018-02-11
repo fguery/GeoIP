@@ -15,7 +15,7 @@ services:
         command: php -S 0.0.0.0:8080 -t public index.php
         environment:
             db: pgsql:host=postgres;user=postgres;password=mysecretpassword;port=5432
-            dbName: geoIP
+            tableName: geo_ip
         ports:
             - 8081:8080
         volumes:

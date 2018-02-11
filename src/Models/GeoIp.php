@@ -11,35 +11,39 @@ class GeoIp
 {
     /** @var PDO */
     protected $db;
+    /** @var string */
+    protected $tableName;
 
     /**
      * GeoIp constructor.
      * @param PDO $collection
+     * @param string $tableName
      */
-    public function __construct(PDO $collection)
+    public function __construct(PDO $collection, $tableName)
     {
         $this->db = $collection;
+        $this->tableName = $tableName;
     }
 
     public function createDatabase()
     {
         $this->db->query(
-            'drop database geoIP;'
-    );
+            'drop table IF EXISTS ' . $this->tableName
+        );
         $this->db->query(
-            'create database geoIP;'
+            'drop index IF EXISTS ' . $this->tableName . '_ip_range'
         );
         $this->db->query('
-            create table geoIP (
-                rangeStart INET,
-                rangeEnd INET,
-                isv6 boolean,
+            create table ' . $this->tableName . ' (
+                range_start INET,
+                range_end INET,
+                is_v6 boolean,
                 country varchar(2),
                 region varchar(100),
                 city varchar(100));
         ');
         $this->db->query('
-            CREATE index rangeEnd on geoIP(isv6, rangeEnd);
+            CREATE index ' . $this->tableName . '_ip_range on ' . $this->tableName . '(is_v6, range_start, range_end);
         ');
     }
 
